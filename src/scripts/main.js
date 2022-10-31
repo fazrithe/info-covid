@@ -2,36 +2,27 @@ import { async } from "regenerator-runtime";
 
 function main() {
 //chart
-var xValues = [];
-var yValues = [];
-generateData("x * 2 + 7", 0, 10, 0.5);
-console.log('sss');
-new Chart("myChart", {
-  type: "line",
-  data: {
-    labels: xValues,
-    datasets: [{
-      fill: false,
-      pointRadius: 1,
-      borderColor: "rgba(255,0,0,0.5)",
-      data: yValues
-    }]
-  },    
-  options: {
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "y = x * 2 + 7",
-      fontSize: 16
+  const getGlobalCart = async () => {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth();
+    var monthEnd = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+    var dateStart = `${year}-${month}-${day}`;
+    var dateEnd = `${year}-${monthEnd}-${day}`;
+    try {
+      const response = await fetch(`https://api.covid19api.com/world?from=${dateStart}&to=${dateEnd}`)
+      const responseJson = await response.json();
+
+      if(responseJson.error){
+        showResponseMessage(responseJson.message);
+      }else{
+        renderCovidCart(responseJson);
+      }
+    } catch (error) {
+      showResponseMessage(error);
     }
   }
-});
-function generateData(value, i1, i2, step = 1) {
-  for (let x = i1; x <= i2; x += step) {
-    yValues.push(eval(value));
-    xValues.push(x);
-  }
-}
 
 //Global Data
   const getCovid = async () => {
@@ -64,6 +55,88 @@ function generateData(value, i1, i2, step = 1) {
     document.querySelector('#globalDeath').innerHTML= covids;
   };
 
+  const renderCovidCart = (covids) => {
+    var confirm = [];
+    var death = [];
+    covids.forEach(covid => {
+        confirm.push(eval(covid.NewConfirmed));
+        death.push(eval(covid.NewDeaths));
+    });
+    var arrConfirm = confirm;
+    var arrDeath = death;
+
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth();
+    var monthEnd = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+    var monthEndOf = '';
+    if(monthEnd == 10 || monthEnd == 11 || monthEnd == 12){
+      monthEndOf = monthEnd;
+    }else{
+      monthEndOf = '0'+monthEnd;
+    }
+
+    var monthOf = '';
+    if(month == 10 || month == 11 || month == 12){
+      monthOf = month;
+    }else{
+      monthOf = '0'+month;
+    }
+
+    var dateStart = `${year}-${monthOf}-${day}`;
+    var dateEnd = `${year}-${monthEndOf}-${day}`;
+    var listDate = [];
+    var startDate = dateStart;
+    var endDate = dateEnd;
+    var dateMove = new Date(startDate);
+    var strDate = startDate;
+
+    while (strDate < endDate){
+      var strDate = dateMove.toISOString().slice(0,10);
+      listDate.push(strDate);
+      dateMove.setDate(dateMove.getDate()+1);
+    };
+
+    var date = listDate;
+    var textName = "Total Coronavirus Cases";
+    var data = arrConfirm;
+    var ctx = document.getElementById("myChart-cases-covid");
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: date,
+        datasets: [
+          { 
+            data: data,
+            label: "World New Cases",
+            borderColor: "#3e95cd",
+            fill: false
+          },
+        ]
+      }
+    });
+
+    var dataDeath = arrDeath;
+    var ctx = document.getElementById("myChart-death-covid");
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: date,
+        datasets: [
+          { 
+            data: dataDeath,
+            label: "World New Cases",
+            borderColor: "#c45850",
+            fill: false
+          },
+        ]
+      }
+    });
+
+  }
+  
+
   const renderCovidDate = (covids) => {
     let dateFormat = new Date(covids);
     let date = dateFormat.getDate();
@@ -78,8 +151,8 @@ function generateData(value, i1, i2, step = 1) {
 
   document.addEventListener('DOMContentLoaded', () => {
     getCovid();
+    getGlobalCart();
   });
-
 
 }
 

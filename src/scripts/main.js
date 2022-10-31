@@ -1,15 +1,15 @@
 import { async } from "regenerator-runtime";
 
-function main() {
+const main = async () => {
 //chart
   const getGlobalCart = async () => {
-    var currentDate = new Date();
-    var day = currentDate.getDate();
-    var month = currentDate.getMonth();
-    var monthEnd = currentDate.getMonth() + 1;
-    var year = currentDate.getFullYear();
-    var dateStart = `${year}-${month}-${day}`;
-    var dateEnd = `${year}-${monthEnd}-${day}`;
+    let currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth();
+    const monthEnd = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+    const dateStart = `${year}-${month}-${day}`;
+    const dateEnd = `${year}-${monthEnd}-${day}`;
     try {
       const response = await fetch(`https://api.covid19api.com/world?from=${dateStart}&to=${dateEnd}`)
       const responseJson = await response.json();
@@ -56,40 +56,40 @@ function main() {
   };
 
   const renderCovidCart = (covids) => {
-    var confirm = [];
-    var death = [];
+    let confirm = [];
+    let death = [];
     covids.forEach(covid => {
         confirm.push(eval(covid.NewConfirmed));
         death.push(eval(covid.NewDeaths));
     });
-    var arrConfirm = confirm;
-    var arrDeath = death;
+    const arrConfirm = confirm;
+    const arrDeath = death;
 
-    var currentDate = new Date();
-    var day = currentDate.getDate();
-    var month = currentDate.getMonth();
-    var monthEnd = currentDate.getMonth() + 1;
-    var year = currentDate.getFullYear();
-    var monthEndOf = '';
+    let currentDate = new Date();
+    let day = currentDate.getDate();
+    let month = currentDate.getMonth();
+    let monthEnd = currentDate.getMonth() + 1;
+    let year = currentDate.getFullYear();
+    let monthEndOf = '';
     if(monthEnd == 10 || monthEnd == 11 || monthEnd == 12){
       monthEndOf = monthEnd;
     }else{
       monthEndOf = '0'+monthEnd;
     }
 
-    var monthOf = '';
+    let monthOf = '';
     if(month == 10 || month == 11 || month == 12){
       monthOf = month;
     }else{
       monthOf = '0'+month;
     }
 
-    var dateStart = `${year}-${monthOf}-${day}`;
-    var dateEnd = `${year}-${monthEndOf}-${day}`;
-    var listDate = [];
-    var startDate = dateStart;
-    var endDate = dateEnd;
-    var dateMove = new Date(startDate);
+    const dateStart = `${year}-${monthOf}-${day}`;
+    const dateEnd = `${year}-${monthEndOf}-${day}`;
+    let listDate = [];
+    let startDate = dateStart;
+    let endDate = dateEnd;
+    let dateMove = new Date(startDate);
     var strDate = startDate;
 
     while (strDate < endDate){
@@ -98,9 +98,8 @@ function main() {
       dateMove.setDate(dateMove.getDate()+1);
     };
 
-    var date = listDate;
-    var textName = "Total Coronavirus Cases";
-    var data = arrConfirm;
+    let date = listDate;
+    let data = arrConfirm;
     var ctx = document.getElementById("myChart-cases-covid");
     var myChart = new Chart(ctx, {
       type: 'line',

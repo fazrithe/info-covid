@@ -63,7 +63,7 @@ const main = async () => {
         death.push(eval(covid.NewDeaths));
     });
     const arrConfirm = confirm;
-    const arrDeath = death;
+    let arrDeath = death;
 
     let currentDate = new Date();
     let day = currentDate.getDate();
@@ -88,20 +88,18 @@ const main = async () => {
     const dateEnd = `${year}-${monthEndOf}-${day}`;
     let listDate = [];
     let startDate = dateStart;
-    let endDate = dateEnd;
+    let endDate = new Date(dateEnd);
     let dateMove = new Date(startDate);
-    var strDate = startDate;
 
-    while (strDate < endDate){
-      var strDate = dateMove.toISOString().slice(0,10);
+    while (dateMove < endDate){
+      let strDate = dateMove.toISOString().slice(0,10);
       listDate.push(strDate);
       dateMove.setDate(dateMove.getDate()+1);
     };
 
     let date = listDate;
     let data = arrConfirm;
-    var ctx = document.getElementById("myChart-cases-covid");
-    var myChart = new Chart(ctx, {
+    new Chart("myChart-cases-covid", {
       type: 'line',
       data: {
         labels: date,
@@ -116,9 +114,8 @@ const main = async () => {
       }
     });
 
-    var dataDeath = arrDeath;
-    var ctx = document.getElementById("myChart-death-covid");
-    var myChart = new Chart(ctx, {
+    const dataDeath = arrDeath;
+    new Chart("myChart-death-covid", {
       type: 'line',
       data: {
         labels: date,
@@ -134,6 +131,12 @@ const main = async () => {
     });
 
   }
+
+  let select = document.getElementById('selectCountry');
+  select.addEventListener('click', function() {
+      var options = select.value;
+          console.log(options);
+  });
   
 
   const renderCovidDate = (covids) => {
